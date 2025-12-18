@@ -2,15 +2,15 @@ import React from "react";
 
 type ButtonProps = {
   children: React.ReactNode;
-  onClick?: () => void;
   type?: "button" | "submit";
+  onClick?: () => void;
   variant?: "primary" | "danger";
 };
 
 export default function Button({
   children,
-  onClick,
   type = "button",
+  onClick,
   variant = "primary",
 }: ButtonProps) {
   const styles = {
