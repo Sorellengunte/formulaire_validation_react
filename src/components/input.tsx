@@ -1,38 +1,63 @@
-import React from "react";
+import React, { forwardRef } from "react";
 
 type InputProps = {
   label: string;
   type?: string;
-  value: string;
   placeholder?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  showToggle?: boolean; // pour le bouton voir/masquer mot de passe
+  showToggle?: boolean;
   onToggle?: () => void;
   toggleState?: boolean;
-};
+  error?: boolean;
+} & React.InputHTMLAttributes<HTMLInputElement>;
 
-export default function Input({
-  label,
-  type = "text",
-  value,
-  placeholder,
-  onChange,
-  showToggle = false,
-  onToggle,
-  toggleState = false,
-}: InputProps) {
-  return (
-    <div className="flex flex-col">
-      <label className="mb-1 font-medium">{label}</label>
-      <div className="relative">
-        <input type={showToggle && toggleState ? "text" : type} value={value} onChange={onChange} placeholder={placeholder}
-          className="w-full border border-black rounded px-3 py-2 pr-16 focus:outline-none focus:ring focus:ring-blue-300"/>
-        {showToggle && onToggle && (
-          <button type="button"  onClick={onToggle} className="absolute right-2 top-2 text-blue-500 text-sm">
-            {toggleState ? "Masquer" : "Voir"}
-          </button>
-        )}
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      label,
+      type = "text",
+      placeholder,
+      showToggle = false,
+      onToggle,
+      toggleState = false,
+      error = false, 
+      className = "",
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <div className="flex flex-col">
+        <label className="mb-1 font-medium">{label}</label>
+
+        <div className="relative">
+          <input
+            ref={ref}
+            type={showToggle && toggleState ? "text" : type}
+            placeholder={placeholder}
+            className={`w-full border rounded px-3 py-2 pr-16 focus:outline-none focus:ring ${
+              error 
+                ? "border-red-500 focus:ring-red-300" 
+                : "border-black focus:ring-blue-300"
+            } ${className}`}
+            {...props}
+          />
+
+          {showToggle && onToggle && (
+            <button
+              type="button"
+              onClick={onToggle}
+              className="absolute right-2 top-2 text-blue-500 text-sm hover:text-blue-700"
+            >
+              {toggleState ? "Masquer" : "Voir"}
+            </button>
+          )}
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+);
+
+// Pour le debugging dans React DevTools
+Input.displayName = "Input";
+
+export default Input;
